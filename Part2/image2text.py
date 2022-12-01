@@ -44,7 +44,7 @@ test_letters = load_letters(test_img_fname)
 
 import numpy as np
 
-def get_init_and_trans_prob():
+def get_init_and_trans_prob(classes):
     train_data = []
     with open(train_txt_fname,"r") as file:
         for line in file:
@@ -84,6 +84,13 @@ def get_init_and_trans_prob():
     for char,cnt in init_prob.items():
         init_prob[char] = cnt/TOTAL_CHAR_CNT
     
+    for curr_cls in classes:
+        if curr_cls not in trans_prob:
+            trans_prob[curr_cls] = {}
+        for prev_cls in classes:
+            if prev_cls not in trans_prob[curr_cls]:
+                trans_prob[curr_cls][prev_cls] = 1/1000000
+
     return init_prob,trans_prob
 
 def nb_classifier(mtx,train_mtx,classes):
@@ -103,7 +110,7 @@ def main():
 
     classes = list(train_letters.keys())
 
-    init_prob,trans_prob = get_init_and_trans_prob() 
+    init_prob,trans_prob = get_init_and_trans_prob(classes) 
     #ASSUMPTION
     init_prob['"'] = init_prob["'"]
 
