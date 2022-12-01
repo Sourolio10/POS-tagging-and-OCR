@@ -46,7 +46,7 @@ import numpy as np
 
 def get_init_and_trans_prob():
     train_data = []
-    with open("../Part1/bc.train","r") as file:
+    with open(train_txt_fname,"r") as file:
         for line in file:
             train_data.append(line.split())   
     train_data = [[j for i,j in enumerate(entry) if i%2==0] for entry in train_data]
