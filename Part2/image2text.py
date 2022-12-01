@@ -114,7 +114,7 @@ def main():
     for v in test_letters:
         mtx = [[i=="*" for i in list("".join(v))]]
         mtx = np.array(mtx).astype(int)
-        score = nb_classifier(mtx,classes)
+        score = nb_classifier(mtx,train_mtx,classes)
         final_simple.append([score[c] for c in classes])
         curr_layer = []
         for curr_class in classes:
