@@ -98,8 +98,8 @@ def nb_classifier(mtx,train_mtx,classes):
     NUM_CLASSES = len(classes)
     score = {}
     for c in range(NUM_CLASSES):
-        log_prob = -1*np.log(1/NUM_CLASSES)+(np.sum(np.equal(mtx[0,:],train_mtx[c,:]))*np.log(m))+(np.sum(np.not_equal(mtx[0,:],train_mtx[c,:]))*np.log(1-m))
-        score[classes[c]]=log_prob
+        log_prob = np.log(1/NUM_CLASSES)+(np.sum(np.equal(mtx[0,:],train_mtx[c,:]))*np.log(m))+(np.sum(np.not_equal(mtx[0,:],train_mtx[c,:]))*np.log(1-m))
+        score[classes[c]]=-log_prob
     return score
 
 def main():
