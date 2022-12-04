@@ -6,7 +6,8 @@
 # (Based on skeleton code by D. Crandall)
 #
 
-
+import numpy as np
+import traceback
 import random
 import math
 
@@ -95,20 +96,30 @@ class Solver:
 
         for k in POS:
             trans_prob[k] = {}
+            trans_prob_2[k] = {}
             POS_count[k] = 0
         
         for m in trans_prob:
             for e in POS:
                 trans_prob[m][e] = 0
+                trans_prob_2[m][e] = 0
         
         for x in range(0,len(data)):
             for y in range(0,len(data[x][0])-1):
                 POS_count[data[x][1][y]] += 1
                 trans_prob[data[x][1][y]][data[x][1][y+1]] += 1
 
+        for x in range(0,len(data)):
+            for y in range(0,len(data[x][0])-2):
+                trans_prob[data[x][1][y]][data[x][1][y+2]] += 1
+
         for m in trans_prob:
             for n in trans_prob[m]:
                 trans_prob[m][n] = trans_prob[m][n]/POS_count[m]
+        
+        for m in trans_prob_2:
+            for n in trans_prob_2[m]:
+                trans_prob_2[m][n] = trans_prob_2[m][n]/POS_count[m]
         
 
 
@@ -231,7 +242,42 @@ class Solver:
         #return [ "noun" ] * len(sentence)
 
     def complex_mcmc(self, sentence):
-        return [ "noun" ] * len(sentence)
+        rng = np.random.default_rng()
+        mtx = rng.choice(POS,len(sentence)).tolist()
+        val_mtx = [1e-8]*len(sentence)
+        mp_vl_log = []
+        for itr in range(500):
+            for w_idx,w in enumerate(sentence):
+                min_val = np.inf
+                best_p = 'x'
+                for p in POS:
+
+                    if w in emission_prob:
+                        emp = emission_prob[w][p]
+                        if w_idx>0:
+                            emp_prev = emission_prob[w][mtx[w_idx-1]]
+                    else:
+                        emp = 1e-8
+
+                    if w_idx>=2:
+                        val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(trans_prob_2[mtx[w_idx-2]][p])-np.log(val_mtx[w_idx-2])-np.log(emp)-np.log(emp_prev)
+                    elif w_idx==1:
+                        val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(emp)-np.log(emp_prev)
+                    elif w_idx==0:
+                        val = -np.log(emp)
+                    if val < min_val:
+                        min_val=val
+                        best_p=p
+                mtx[w_idx]=best_p
+                val_mtx[w_idx]=min_val
+
+                mp_val = np.sum(val_mtx)
+                mp_vl_log.append(mp_val)
+
+            if itr%50==0:
+                if np.std(mp_vl_log[-20:])<1e-5:
+                    break
+        return mtx
 
 
 
