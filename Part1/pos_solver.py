@@ -246,7 +246,7 @@ class Solver:
         mtx = rng.choice(POS,len(sentence)).tolist()
         val_mtx = [1e-8]*len(sentence)
         mp_vl_log = []
-        for itr in range(500):
+        for itr in range(1000):
             for w_idx,w in enumerate(sentence):
                 min_val = np.inf
                 best_p = 'x'
@@ -274,9 +274,6 @@ class Solver:
                 mp_val = np.sum(val_mtx)
                 mp_vl_log.append(mp_val)
 
-            if itr%50==0:
-                if np.std(mp_vl_log[-20:])<1e-5:
-                    break
         return mtx
 
 
