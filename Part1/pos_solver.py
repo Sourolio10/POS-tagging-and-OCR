@@ -253,7 +253,10 @@ class Solver:
                 for p in POS:
 
                     if w in emission_prob:
-                        emp = emission_prob[w][p]
+                        if p not in emission_prob[w]:
+                            emp = 1e-8
+                        else:
+                            emp = emission_prob[w][p]
                         if w_idx>0:
                             emp_prev = emission_prob[w][mtx[w_idx-1]]
                     else:
