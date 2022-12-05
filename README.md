@@ -63,7 +63,7 @@ if val < min_val:
 
 ```
 
-Since we are taking the negative log we can add up all the transition probabilities and actuals from te previous states depending upon our current position as well as add the emission probabilities. We use negative probabilities as the values are too small
+Since we are taking the negative log we can add up all the transition probabilities and actuals from the previous states depending upon our current position as well as add the emission probabilities. We use negative probabilities as the values are too small
 
 We also added a stopping condition wherein for every 50 iterations for the last 20 iterations the standard deviation is less than 1e-5
 
@@ -74,10 +74,36 @@ We are performing Optical Character Recognition using Hidden Markov Model in thi
 We have been provided a training image - courier-train.png and a training file bc.train from Part 1 which generally represents characters from english language. We have also been provided test images to evaluate the results.
 
 ### Hidden Markov Model  
-HMMs are statistical models to capture hidden information from observable sequential symbols (e.g., a nucleotidic sequence). They have many applications in sequence analysis, in particular to predict exons and introns in genomic DNA, identify functional motifs (domains) in proteins (profile HMM), align two sequences (pair HMM). In a HMM, the system being modelled is assumed to be a Markov process with unknown parameters, and the challenge is to determine the hidden parameters from the observable parameters.
+HMMs are statistical models to capture hidden information from observable sequential symbols (e.g., a nucleotidic sequence). The MArkov Model consists of hidden states and  observable states, where the system essentially flows through the states across time. The challenge is to determine the hidden parameters from the observable parameters.
 
 ### Procedure - 
 
-i] Pre-processing data: We are taking a default character width and height of 14 and 25 px respectively. To load the letters, we divide the image by character width and and then map each of the characters in that image sample to their english language characters. Now we open bc.train file to load the train file and split them into different lines. Then, we check if each character in the word is alphabet or number and ignore the special characters to create a clean training file.
+i) Pre-processing data: 
+We are taking a default character width and height of 14 and 25 px respectively. In the supplied code yo load the letters, we map each of the characters in that image sample to their english language characters. We've further flatten out the image to a single array and represent each pixel by a 0(white) or 1 (black) Now we open bc.train file to load the train file and remove the POS tags rejoin the text to form sentences
 
-ii] Training: After cleaning the dataset we calculate the initial and the transition probabilities of each characters. For the train and test data we create matrix with character "*" at positions where characters are found. Now, use Naive Bayes classifier to test the score of our test image by passing the train and test matrix and the classes of the training dataset. 
+ii) Training: After cleaning the dataset we calculate the initial and the transition probabilities of each characters. We also load up courier train image file and represent it with 1s and 0s as this will at as our reference for the prediction.
+
+iii)Naive Bayes Classifier: We implement a simple naive bayes classifier as mentioned in the question, we assume a probability of the pixels being correct as 90% and use the following equation 
+
+$p^m(1-p)^n$
+
+where p is the probability of a pixel being correct, m is the number of times the pixels match and n is the number of times the pixels do not match the reference image. This is Naive Bayes as we assume conditional independance for the probability of all pixels
+
+The final implementation is as follows
+```
+def nb_classifier(mtx,train_mtx,classes):
+    m=0.9
+    NUM_CLASSES = len(classes)
+    score = {}
+    for c in range(NUM_CLASSES):
+        log_prob = np.log(1/NUM_CLASSES)+(np.sum(np.equal(mtx[0,:],train_mtx[c,:]))*np.log(m))+(np.sum(np.not_equal(mtx[0,:],train_mtx[c,:]))*np.log(1-m))
+        score[classes[c]]=-log_prob
+    return score
+```
+
+iv) Simple and Viterbi HMM: For the simple HMM we just use the raw Naive Bayes Classifier Probabilities on each word and predict the character with max probability.
+
+For Viterbi Decoding we record a matrix of values we start with the initial probabilities for each class, For each subsequent layer for each class we multply the transition probabilty from the previous layer and the actual value at that layer, as per the algorithm we select the maximum such (minimum in implementation since we are taking negative log) and multiply with emission probability (add in implementation)
+
+This will generate the final matrix we select index of minimum value for all the columns and remap that to each character and we have our final results.
+
