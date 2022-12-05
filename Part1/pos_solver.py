@@ -177,52 +177,6 @@ class Solver:
             for n in trans_prob_2[m]:
                 trans_prob_2[m][n] = trans_prob_2[m][n]/POS_count[m]
         
-
-
-        #print(start_prob)
-        
-        
-        
-
-
-        
-
-
-
-
-
-
-
-
-
-        '''
-        for x in start_prob:
-            if(start_prob[x]>0):
-                print(x,start_prob[x])
-
-        for x in emission_prob:
-            if(len(emission_prob[x])>1):
-                print(x)
-                print(emission_prob[x])
-        for x in emission_prob:
-            if(len(emission_prob[x])>1):
-                print(x)
-                print(emission_prob[x])
-
-        for x in range(0,len(data)):
-            data[x][0] 
-
-
-            print(x[0],'\n')
-            print(x[1],'\n')
-            print('\n')
-
-
-        train_data_file = open("bc.train", 'r')
-        train_data = train_data_file.readlines()
-        for x in range(0,len(train_data)):
-            print(train_data[x].split(),'\n')
-        '''
         
         
         pass
