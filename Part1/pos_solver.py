@@ -42,7 +42,63 @@ class Solver:
                         sum = sum+math.log(emission_prob[sentence[x]][label[x]])
             return sum
         elif model == "HMM":
-            return -999
+            sum=0
+            ans = []
+            val = []
+            num = len(sentence)
+            V = []
+            for i in range(12):
+                t = []
+                for j in range(num):
+                    t.append(0)
+                V.append(t)
+        
+            # 0th column of V
+            for i in range(12):
+                if(sentence[0] not in emission_prob):
+                    V[i][0] = start_prob[POS[i]] * 0.0000000000001
+                    sum=sum+math.log(start_prob[POS[i]])-36.841361487904734
+                else:
+                    if(POS[i] not in emission_prob[sentence[0]]):
+                      V[i][0] = start_prob[POS[i]] * 0.0000000000001
+                      sum=sum+math.log(start_prob[POS[i]])-36.841361487904734
+                    else:
+                       V[i][0] = start_prob[POS[i]] * emission_prob[sentence[0]][POS[i]]
+                       sum=sum+math.log(start_prob[POS[i]])+math.log(emission_prob[sentence[0]][POS[i]])
+        
+            temp_pos = 0
+            temp_max = -1
+            for i in range(12):
+                if(V[i][0] > temp_max):
+                    temp_max = V[i][0]
+                    temp_pos = i
+        
+            val.append(temp_max)
+            ans.append(POS[temp_pos])
+
+            for j in range(1,num):
+                for i in range(12):
+                    if(sentence[j] not in emission_prob):
+                          V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
+                          sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
+                    else:
+                        if(POS[i] not in emission_prob[sentence[j]]):
+                            V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
+                            sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
+                        else:
+                            V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * emission_prob[sentence[j]][POS[i]]
+                            sum=sum+(0 if emission_prob[sentence[j]][POS[i]]==0 else math.log(emission_prob[sentence[j]][POS[i]]))+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
+                prev_pos = 0
+                prev_max = -1
+                for i in range(12):
+                    if(V[i][j]>prev_max):
+                        prev_max = V[i][j]
+                        prev_pos = i
+                val.append(prev_max)
+                ans.append(POS[prev_pos])
+
+
+            return sum
         elif model == "Complex":
             return -999
         else:
@@ -124,52 +180,6 @@ class Solver:
             for n in trans_prob_2[m]:
                 trans_prob_2[m][n] = trans_prob_2[m][n]/POS_count[m]
         
-
-
-        #print(start_prob)
-        
-        
-        
-
-
-        
-
-
-
-
-
-
-
-
-
-        '''
-        for x in start_prob:
-            if(start_prob[x]>0):
-                print(x,start_prob[x])
-
-        for x in emission_prob:
-            if(len(emission_prob[x])>1):
-                print(x)
-                print(emission_prob[x])
-        for x in emission_prob:
-            if(len(emission_prob[x])>1):
-                print(x)
-                print(emission_prob[x])
-
-        for x in range(0,len(data)):
-            data[x][0] 
-
-
-            print(x[0],'\n')
-            print(x[1],'\n')
-            print('\n')
-
-
-        train_data_file = open("bc.train", 'r')
-        train_data = train_data_file.readlines()
-        for x in range(0,len(train_data)):
-            print(train_data[x].split(),'\n')
-        '''
         
         
         pass
