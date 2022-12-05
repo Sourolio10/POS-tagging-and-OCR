@@ -25,6 +25,8 @@ trans_prob_2 = {}
 POS = ['adj','adv','adp','conj','det','noun','num','pron','prt','verb','x','.']
 gb = Gibbs()
 
+op_log = {}
+
 class Solver:
     # Calculate the log of the posterior probability of a given sentence
     #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
@@ -41,66 +43,66 @@ class Solver:
                         sum = sum+math.log(emission_prob[sentence[x]][label[x]])
             return sum
         elif model == "HMM":
-            sum=0
-            ans = []
-            val = []
-            num = len(sentence)
-            V = []
-            for i in range(12):
-                t = []
-                for j in range(num):
-                    t.append(0)
-                V.append(t)
+            # sum=0
+            # ans = []
+            # val = []
+            # num = len(sentence)
+            # V = []
+            # for i in range(12):
+            #     t = []
+            #     for j in range(num):
+            #         t.append(0)
+            #     V.append(t)
         
-            # 0th column of V
-            for i in range(12):
-                if(sentence[0] not in emission_prob):
-                    V[i][0] = start_prob[POS[i]] * 0.0000000000001
-                    sum=sum+math.log(start_prob[POS[i]])-36.841361487904734
-                else:
-                    if(POS[i] not in emission_prob[sentence[0]]):
-                      V[i][0] = start_prob[POS[i]] * 0.0000000000001
-                      sum=sum+math.log(start_prob[POS[i]])-36.841361487904734
-                    else:
-                       V[i][0] = start_prob[POS[i]] * emission_prob[sentence[0]][POS[i]]
-                       sum=sum+math.log(start_prob[POS[i]])+math.log(emission_prob[sentence[0]][POS[i]])
+            # # 0th column of V
+            # for i in range(12):
+            #     if(sentence[0] not in emission_prob):
+            #         V[i][0] = start_prob[POS[i]] * 0.0000000000001
+            #         sum=sum+math.log(start_prob[POS[i]])-29.936
+            #     else:
+            #         if(POS[i] not in emission_prob[sentence[0]]):
+            #           V[i][0] = start_prob[POS[i]] * 0.0000000000001
+            #           sum=sum+math.log(start_prob[POS[i]])-29.936
+            #         else:
+            #            V[i][0] = start_prob[POS[i]] * emission_prob[sentence[0]][POS[i]]
+            #            sum=sum+math.log(start_prob[POS[i]])+math.log(emission_prob[sentence[0]][POS[i]])
         
-            temp_pos = 0
-            temp_max = -1
-            for i in range(12):
-                if(V[i][0] > temp_max):
-                    temp_max = V[i][0]
-                    temp_pos = i
+            # temp_pos = 0
+            # temp_max = -1
+            # for i in range(12):
+            #     if(V[i][0] > temp_max):
+            #         temp_max = V[i][0]
+            #         temp_pos = i
         
-            val.append(temp_max)
-            ans.append(POS[temp_pos])
+            # val.append(temp_max)
+            # ans.append(POS[temp_pos])
 
-            for j in range(1,num):
-                for i in range(12):
-                    if(sentence[j] not in emission_prob):
-                          V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
-                          sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
-                    else:
-                        if(POS[i] not in emission_prob[sentence[j]]):
-                            V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
-                            sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
-                        else:
-                            V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * emission_prob[sentence[j]][POS[i]]
-                            sum=sum+(0 if emission_prob[sentence[j]][POS[i]]==0 else math.log(emission_prob[sentence[j]][POS[i]]))+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
-                prev_pos = 0
-                prev_max = -1
-                for i in range(12):
-                    if(V[i][j]>prev_max):
-                        prev_max = V[i][j]
-                        prev_pos = i
-                val.append(prev_max)
-                ans.append(POS[prev_pos])
+            # for j in range(1,num):
+            #     for i in range(12):
+            #         if(sentence[j] not in emission_prob):
+            #               V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
+            #               sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
+            #         else:
+            #             if(POS[i] not in emission_prob[sentence[j]]):
+            #                 V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
+            #                 sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
+            #             else:
+            #                 V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * emission_prob[sentence[j]][POS[i]]
+            #                 sum=sum+(0 if emission_prob[sentence[j]][POS[i]]==0 else math.log(emission_prob[sentence[j]][POS[i]]))+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-36.841361487904734
+            #     prev_pos = 0
+            #     prev_max = -1
+            #     for i in range(12):
+            #         if(V[i][j]>prev_max):
+            #             prev_max = V[i][j]
+            #             prev_pos = i
+            #     val.append(prev_max)
+            #     ans.append(POS[prev_pos])
 
 
-            return sum
+            # return sum
+            return op_log[" ".join(sentence)]["HMM"]
         elif model == "Complex":
-            pred_pos,log_probs,map_val_log = gb.run_gibbs(sentence)
-            return -map_val_log[-1]
+            return op_log[" ".join(sentence)]["Complex"]
         else:
             print("Unknown algo!")
 
@@ -202,6 +204,7 @@ class Solver:
         return ans
 
     def hmm_viterbi(self, sentence):
+        sum=0
         ans = []
         val = []
         num = len(sentence)
@@ -215,12 +218,15 @@ class Solver:
         # 0th column of V
         for i in range(12):
             if(sentence[0] not in emission_prob):
-                V[i][0] = start_prob[POS[i]] * 0.00001
+                V[i][0] = start_prob[POS[i]] * 0.0000000000001
+                sum=sum+math.log(start_prob[POS[i]])-29.936
             else:
                 if(POS[i] not in emission_prob[sentence[0]]):
-                    V[i][0] = start_prob[POS[i]] * 0.00001
+                    V[i][0] = start_prob[POS[i]] * 0.0000000000001
+                    sum=sum+math.log(start_prob[POS[i]])-29.936
                 else:
                     V[i][0] = start_prob[POS[i]] * emission_prob[sentence[0]][POS[i]]
+                    sum=sum+math.log(start_prob[POS[i]])+math.log(emission_prob[sentence[0]][POS[i]])
         
         temp_pos = 0
         temp_max = -1
@@ -235,12 +241,15 @@ class Solver:
         for j in range(1,num):
             for i in range(12):
                 if(sentence[j] not in emission_prob):
-                    V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.00001
+                    V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
+                    sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-29.936
                 else:
                     if(POS[i] not in emission_prob[sentence[j]]):
-                        V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.00001
+                        V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * 0.0000000000001
+                        sum=sum+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-29.936
                     else:
                         V[i][j] = trans_prob[ans[j-1]][POS[i]] * val[j-1] * emission_prob[sentence[j]][POS[i]]
+                        sum=sum+(0 if emission_prob[sentence[j]][POS[i]]==0 else math.log(emission_prob[sentence[j]][POS[i]]))+(0 if trans_prob[ans[j-1]][POS[i]]==0 else math.log(trans_prob[ans[j-1]][POS[i]]))-29.936
             prev_pos = 0
             prev_max = -1
             for i in range(12):
@@ -250,12 +259,22 @@ class Solver:
             val.append(prev_max)
             ans.append(POS[prev_pos])
 
-             
+        sent = " ".join(sentence)
+        if sent not in op_log:
+            op_log[sent]={}
+        op_log[sent]["HMM"] = sum
+
         return ans
         #return [ "noun" ] * len(sentence)
 
     def complex_mcmc(self, sentence):
         pred_pos,log_probs,map_val_log = gb.run_gibbs(sentence)
+        
+        sent = " ".join(sentence)
+        if sent not in op_log:
+            op_log[sent]={}
+        op_log[sent]["Complex"] = -map_val_log[-1]    
+        
         return pred_pos
 
 
