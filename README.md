@@ -34,7 +34,38 @@ For implementing the hidden markov model using viterbi algorithm, we have made u
 Now we start filling up this table. For the 1st column, we are considering the value of start_prob[current POS] * emission_prob[current word][current POS]. We select the maximum value out of the column and tag that corresponding POS to the word. Now we move over to the second column. For filling up the second column, we are considering the value of max(values of column_1) * trans_prob[POS of prev word][current POS] * emission_prob[current word][current POS]. We keep tagging the words with the POS for which the value is maximum, and then use this POS for the next columns. This implementation takes into account that the current and past POS's affect the future POS's. After the table is filled, we have our list of tagged POS for all the words in the sentence.
 
 ### Complex_MCMC
-For implementing the Markov Chain Monte Carlo using Gibbs sampling, we have made use of the emission_prob, start_prob, trans_prob and trans_prob_2 dictionaries. Gibbs sampling helps us to build a Markov chain whose values converge towards a target distribution. We are randomly initializing the target POS's. We are running 500 iterations over our input sentence, and in each iteration, we are trying to find the best fit POS. For the first word, we are just considering the emission probability. For the second word, we are considering the emission and transition 1 probability. For the rest, we are considering emission, transition 1 and transition 2 probability. We are also keeping a check after every 50 iterations if the tagged POS are deviating too much, then we break the loop.
+As we know that under Gibbs sampling we start with a propasal distribution and draw subsequent samples which are biased towards the stationary distribution,
+
+The calculations for this part occur in the file gibbs.py
+
+We begin with the computation of emission probabilities by recording the number of times a given word is observed for a particular POS on the training data and divide that by the number of times that POS occurs in the corpus
+
+Similarly we calculate 2 transition matrices one for next POS probability and one for next to next POS probability calculation
+
+The matrices are calculated in train function
+
+Under function run_gibbs the actual gibbs sampling code occurs
+
+We start with a random permutation of the topics. In each iteration and for each word we set the min_val parameter to inf, this is the negative log of the probability of selecting a particular POS for this word
+
+The actual probability calculation given the complex bayes net structure is shown below
+
+```
+if w_idx>=2:
+    val = -np.log(self.tr_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(self.tr_prob2[mtx[w_idx-2]][p])-np.log(val_mtx[w_idx-2])-np.log(emp)-np.log(emp_prev)
+elif w_idx==1:
+    val = -np.log(self.tr_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(emp)-np.log(emp_prev)
+elif w_idx==0:
+    val = -np.log(emp)
+if val < min_val:
+    min_val=val
+    best_p=p
+
+```
+
+Since we are taking the negative log we can add up all the transition probabilities and actuals from te previous states depending upon our current position as well as add the emission probabilities. We use negative probabilities as the values are too small
+
+We also added a stopping condition wherein for every 50 iterations for the last 20 iterations the standard deviation is less than 1e-5
 
 # Part 2: Reading text
 We are performing Optical Character Recognition using Hidden Markov Model in this part.
