@@ -16,6 +16,7 @@ from gibbs import Gibbs
 # that we've supplied.
 #
 
+e = 2.718
 POS_count = {}
 total_count = {}
 emission_prob = {}
