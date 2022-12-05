@@ -85,7 +85,7 @@ ii) Training: After cleaning the dataset we calculate the initial and the transi
 
 iii)Naive Bayes Classifier: We implement a simple naive bayes classifier as mentioned in the question, we assume a probability of the pixels being correct as 90% and use the following equation 
 
-$p^m(1-p)^n$
+$$p^m(1-p)^n$$
 
 where p is the probability of a pixel being correct, m is the number of times the pixels match and n is the number of times the pixels do not match the reference image. This is Naive Bayes as we assume conditional independance for the probability of all pixels
 
