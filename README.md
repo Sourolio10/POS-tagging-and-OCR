@@ -83,11 +83,7 @@ We are taking a default character width and height of 14 and 25 px respectively.
 
 ii) Training: After cleaning the dataset we calculate the initial and the transition probabilities of each characters. We also load up courier train image file and represent it with 1s and 0s as this will at as our reference for the prediction.
 
-iii)Naive Bayes Classifier: We implement a simple naive bayes classifier as mentioned in the question, we assume a probability of the pixels being correct as 90% and use the following equation 
-
-$$p^m(1-p)^n$$
-
-where p is the probability of a pixel being correct, m is the number of times the pixels match and n is the number of times the pixels do not match the reference image. This is Naive Bayes as we assume conditional independance for the probability of all pixels
+iii)Naive Bayes Classifier: We implement a simple naive bayes classifier as mentioned in the question, we assume a probability of the pixels being correct as 90%. We assume a small prior of 1/num classes and multiple number of correct pixels with m and  number of incorrect pixels with 1-m.
 
 The final implementation is as follows
 ```
