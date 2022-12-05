@@ -123,9 +123,9 @@ class Gibbs:
                     mp_val = np.sum(val_mtx)
                     mp_vl_log.append(mp_val)
 
-                # if itr%50==0:
-                #     if np.std(mp_vl_log[-20:])<1e-5:
-                #         break
+                if itr%50==0:
+                    if np.std(mp_vl_log[-20:])<1e-5:
+                        break
         except Exception as e:
             traceback.print_exc()
             print(words)
