@@ -100,7 +100,7 @@ class Solver:
             return sum
         elif model == "Complex":
             pred_pos,log_probs,map_val_log = gb.run_gibbs(sentence)
-            return map_val_log[-1]
+            return -map_val_log[-1]
         else:
             print("Unknown algo!")
 
