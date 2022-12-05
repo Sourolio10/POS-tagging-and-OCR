@@ -36,3 +36,16 @@ Now we start filling up this table. For the 1st column, we are considering the v
 
 
 # Part 2: Reading text
+We are performing Optical Character Recognition using Hindden Markov Model in this part.
+
+### Dataset 
+We have been provided a training image - courier-train.png and a training file bc.train from Part 1 which generally represents characters from english language.. We have also been provided test images to evaluate the results.
+
+### Hidden Markov Model  
+HMMs are statistical models to capture hidden information from observable sequential symbols (e.g., a nucleotidic sequence). They have many applications in sequence analysis, in particular to predict exons and introns in genomic DNA, identify functional motifs (domains) in proteins (profile HMM), align two sequences (pair HMM). In a HMM, the system being modelled is assumed to be a Markov process with unknown parameters, and the challenge is to determine the hidden parameters from the observable parameters.
+
+### Procedure - 
+
+i] Pre-processing data: We are taking a default character width and height of 14 and 25 px respectively. To load the letters, we divide the image by character width and and then map each of the characters in that image sample to their english language characters. Now we open bc.train file to load the train file and split them into different lines. Then, we check if each character in the word is alphabet or number and ignore the special characters to create a clean training file.
+
+ii] Training: After cleaning the dataset we calculate the initial and the transition probabilities of each characters. For the train and test data we create matrix with character "*" at positions where characters are found. Now, use Naive Bayes classifier to test the score of our test image by passing the train and test matrix and the classes of the training dataset. 
