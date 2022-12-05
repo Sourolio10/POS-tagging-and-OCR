@@ -16,6 +16,7 @@ from gibbs import Gibbs
 # that we've supplied.
 #
 
+e = 2.718
 POS_count = {}
 total_count = {}
 emission_prob = {}
@@ -35,12 +36,12 @@ class Solver:
             sum=0
             for x in range(0,len(sentence)):
                 if(sentence[x] not in emission_prob):
-                    sum = sum-36.841361487904734
+                    sum = sum-29.936
                 else:
                     if(label[x] not in emission_prob[sentence[x]]):
-                        sum = sum-36.841361487904734
+                        sum = sum-29.936
                     else:
-                        sum = sum+math.log(emission_prob[sentence[x]][label[x]])
+                        sum = sum+math.log(emission_prob[sentence[x]][label[x]],e)
             return sum
         elif model == "HMM":
             # sum=0
