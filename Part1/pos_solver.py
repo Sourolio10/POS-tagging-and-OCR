@@ -6,8 +6,6 @@
 # (Based on skeleton code by D. Crandall)
 #
 
-import numpy as np
-import traceback
 import random
 import math
 
@@ -255,7 +253,7 @@ class Solver:
         #return [ "noun" ] * len(sentence)
 
     def complex_mcmc(self, sentence):
-        return gb.run_gibbs(sentence)
+        return gb.run_gibbs(sentence)[0]
 #         rng = np.random.default_rng()
 #         mtx = rng.choice(POS,len(sentence)).tolist()
 #         val_mtx = [1e-8]*len(sentence)
