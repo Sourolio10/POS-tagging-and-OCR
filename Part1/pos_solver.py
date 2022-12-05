@@ -11,6 +11,7 @@ import traceback
 import random
 import math
 
+from gibbs import Gibbs
 
 # We've set up a suggested code structure, but feel free to change it. Just
 # make sure your code still works with the label.py and pos_scorer.py code
@@ -24,7 +25,7 @@ start_prob = {}
 trans_prob = {}
 trans_prob_2 = {}
 POS = ['adj','adv','adp','conj','det','noun','num','pron','prt','verb','x','.']
-
+gb = Gibbs()
 class Solver:
     # Calculate the log of the posterior probability of a given sentence
     #  with a given part-of-speech labeling. Right now just returns -999 -- fix this!
@@ -51,6 +52,8 @@ class Solver:
     #
     def train(self, data):
 
+        gb.train(data)
+        
         # Creating the count dictionary
         for x in range(0,len(data)):
             for word in data[x][0]:
@@ -242,47 +245,48 @@ class Solver:
         #return [ "noun" ] * len(sentence)
 
     def complex_mcmc(self, sentence):
-        rng = np.random.default_rng()
-        mtx = rng.choice(POS,len(sentence)).tolist()
-        val_mtx = [1e-8]*len(sentence)
-        mp_vl_log = []
-        for itr in range(1000):
-            for w_idx,w in enumerate(sentence):
-                min_val = np.inf
-                best_p = 'x'
-                for p in POS:
+        return gb.run_gibbs(sentence)
+#         rng = np.random.default_rng()
+#         mtx = rng.choice(POS,len(sentence)).tolist()
+#         val_mtx = [1e-8]*len(sentence)
+#         mp_vl_log = []
+#         for itr in range(1000):
+#             for w_idx,w in enumerate(sentence):
+#                 min_val = np.inf
+#                 best_p = 'x'
+#                 for p in POS:
 
-                    if w in emission_prob:
-                        if p not in emission_prob[w]:
-                            emp = 1e-8
-                        else:
-                            emp = emission_prob[w][p]
-                        if w_idx>0:
-                            prev_p = mtx[w_idx-1]
-                            if prev_p not in emission_prob[w]:
-                                emp_prev = 1e-8
-                            else:
-                                emp_prev = emission_prob[w][prev_p]
-                    else:
-                        emp = 1e-8
-                        emp_prev = 1e-8
+#                     if w in emission_prob:
+#                         if p not in emission_prob[w]:
+#                             emp = 1e-8
+#                         else:
+#                             emp = emission_prob[w][p]
+#                         if w_idx>0:
+#                             prev_p = mtx[w_idx-1]
+#                             if prev_p not in emission_prob[w]:
+#                                 emp_prev = 1e-8
+#                             else:
+#                                 emp_prev = emission_prob[w][prev_p]
+#                     else:
+#                         emp = 1e-8
+#                         emp_prev = 1e-8
 
-                    if w_idx>=2:
-                        val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(trans_prob_2[mtx[w_idx-2]][p])-np.log(val_mtx[w_idx-2])-np.log(emp)-np.log(emp_prev)
-                    elif w_idx==1:
-                        val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(emp)-np.log(emp_prev)
-                    elif w_idx==0:
-                        val = -np.log(emp)
-                    if val < min_val:
-                        min_val=val
-                        best_p=p
-                mtx[w_idx]=best_p
-                val_mtx[w_idx]=min_val
+#                     if w_idx>=2:
+#                         val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(trans_prob_2[mtx[w_idx-2]][p])-np.log(val_mtx[w_idx-2])-np.log(emp)-np.log(emp_prev)
+#                     elif w_idx==1:
+#                         val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(emp)-np.log(emp_prev)
+#                     elif w_idx==0:
+#                         val = -np.log(emp)
+#                     if val < min_val:
+#                         min_val=val
+#                         best_p=p
+#                 mtx[w_idx]=best_p
+#                 val_mtx[w_idx]=min_val
 
-                mp_val = np.sum(val_mtx)
-                mp_vl_log.append(mp_val)
+#                 mp_val = np.sum(val_mtx)
+#                 mp_vl_log.append(mp_val)
 
-        return mtx
+#         return mtx
 
 
 
