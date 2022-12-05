@@ -106,6 +106,7 @@ class Gibbs:
                                 emp_prev = self.em_prob_proc[w][mtx[w_idx-1]]
                         else:
                             emp = 1e-8
+                            emp_prev=1e-8
 
                         if w_idx>=2:
                             val = -np.log(self.tr_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(self.tr_prob2[mtx[w_idx-2]][p])-np.log(val_mtx[w_idx-2])-np.log(emp)-np.log(emp_prev)
