@@ -265,6 +265,7 @@ class Solver:
                                 emp_prev = emission_prob[w][prev_p]
                     else:
                         emp = 1e-8
+                        emp_prev = 1e-8
 
                     if w_idx>=2:
                         val = -np.log(trans_prob[mtx[w_idx-1]][p])-np.log(val_mtx[w_idx-1])-np.log(trans_prob_2[mtx[w_idx-2]][p])-np.log(val_mtx[w_idx-2])-np.log(emp)-np.log(emp_prev)
